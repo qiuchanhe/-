@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>人工操作</title>
+  <link rel="stylesheet" href="common.css" />
+  <style>
+    .page-header { padding: 10px 24px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .page-header h1 { font-size: 18px; font-weight: 600; }
+    .content { padding: 0 24px 40px; display: grid; grid-template-columns: 1fr 360px; gap: 16px; align-items: start; }
+
+    /* Tabs */
+    .op-tabs { display: flex; border-bottom: 1px solid #f0f0f0; margin-bottom: 20px; }
+    .op-tab { padding: 10px 18px; font-size: 13px; cursor: pointer; color: #666; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .op-tab.active { color: #1a7a4a; border-bottom-color: #1a7a4a; font-weight: 600; }
+    .op-tab:hover { color: #1a7a4a; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: flex; flex-direction: column; gap: 14px; }
+
+    /* Form */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .confirm-check { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
+    .confirm-check input { margin-top: 2px; accent-color: #1a7a4a; cursor: pointer; }
+    .submit-row { display: flex; gap: 10px; justify-content: flex-end; padding-top: 10px; border-top: 1px solid #f0f0f0; }
+
+    /* Right panel */
+    .right-panel { position: sticky; top: 64px; display: flex; flex-direction: column; gap: 14px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .ig-item .label { font-size: 12px; color: #999; margin-bottom: 3px; }
+    .ig-item .value { font-size: 13px; font-weight: 500; color: #333; }
+    .ig-item .value.orange { color: #fa8c16; }
+
+    /* Fee summary */
+    .fee-sum { background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 6px; padding: 12px 16px; margin-top: 12px; }
+    .fs-row { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
+    .fs-row .fl { color: #666; }
+    .fs-row .fv { font-weight: 600; }
+    .fs-div { border: none; border-top: 1px dashed #b7eb8f; margin: 6px 0; }
+    .fs-row.total .fl { font-weight: 700; color: #333; }
+    .fs-row.total .fv { font-size: 17px; color: #1a7a4a; font-weight: 700; }
+
+    /* Success modal */
+    .modal { width: 400px; text-align: center; }
+    .modal .icon { font-size: 48px; margin-bottom: 12px; }
+    .modal .title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .modal .desc { font-size: 13px; color: #666; margin-bottom: 20px; }
+    .modal .actions { display: flex; gap: 10px; justify-content: center; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">PaisaGhur</div>
+  <nav>
+    <a href="#">系统管理</a><a href="#">催收审核</a><a href="#">逾观审核</a>
+    <a href="#">催收</a><a href="#" class="active">运营</a><a href="#">客服</a>
+    <a href="#">报表</a><a href="#">营销</a><a href="#">财务</a>
+  </nav>
+  <div class="user"><div class="avatar">何</div>HeQiuChan</div>
+</div>
+<div class="subnav">
+  <a href="index.html" class="active">冷静期取消订单管理</a>
+</div>
+<div class="breadcrumb">
+  <a href="#">运营</a><span>/</span><a href="index.html">冷静期取消订单管理</a><span>/</span>
+  <a href="detail.html">申请详情</a><span>/</span>人工操作
+</div>
+
+<div class="page-header">
+  <h1>人工操作 · CAN-20260410-001</h1>
+  <button class="btn" onclick="history.back()">← 返回详情</button>
+</div>
+
+<div class="content">
+
+  <!-- Left -->
+  <div>
+    <div class="alert alert-info" style="margin-bottom:14px;">
+      当前操作人：HeQiuChan（客服专员）· 所有操作将被完整记录至审计日志
+    </div>
+
+    <div class="card">
+      <div class="card-title">选择操作类型</div>
+      <div class="card-body">
+        <div class="op-tabs">
+          <div class="op-tab active" onclick="switchTab('confirm')">确认还款核实</div>
+          <div class="op-tab" onclick="switchTab('force')">强制取消成功</div>
+          <div class="op-tab" onclick="switchTab('close')">关闭申请</div>
+          <div class="op-tab" onclick="switchTab('retry')">触发重试</div>
+        </div>
+
+        <!-- 确认还款核实 -->
+        <div class="tab-panel active" id="tab-confirm">
+          <div class="alert alert-warning" style="margin:0;">
+            <div class="alert-title">⚠ 适用场景</div>
+            <ul>
+              <li>用户已完成还款，但系统未自动核实（支付回调延迟/异常）</li>
+              <li>操作后申请状态变更为"取消成功"，订单正式免除后续利息并关闭</li>
+              <li>需填写支付流水号作为依据，操作不可撤销</li>
+            </ul>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>支付流水号 <span class="req">*</span></label>
+              <input type="text" placeholder="请输入支付机构流水号" />
+            </div>
+            <div class="form-group">
+              <label>实际支付时间 <span class="req">*</span></label>
+              <input type="datetime-local" />
+            </div>
+            <div class="form-group">
+              <label>实际还款金额 (PKR) <span class="req">*</span></label>
+              <input type="number" placeholder="5050.00" />
+            </div>
+            <div class="form-group">
+              <label>操作原因 <span class="req">*</span></label>
+              <select>
+                <option value="">请选择</option>
+                <option>支付回调延迟，用户已提供凭证</option>
+                <option>系统异常导致核实失败</option>
+                <option>用户投诉，人工核实确认</option>
+                <option>其他</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>备注</label>
+            <textarea placeholder="请填写详细说明（选填）"></textarea>
+          </div>
+          <div class="confirm-check">
+            <input type="checkbox" id="chk-c" onchange="toggleBtn('btn-c','chk-c')" />
+            <label for="chk-c">我已核实支付凭证，确认用户已完成还款，了解此操作不可撤销</label>
+          </div>
+          <div class="submit-row">
+            <button class="btn" onclick="history.back()">取消</button>
+            <button class="btn btn-primary btn-lg" id="btn-c" disabled onclick="showSuccess('还款核实完成，申请已标记为取消成功')">确认提交</button>
+          </div>
+        </div>
+
+        <!-- 强制取消成功 -->
+        <div class="tab-panel" id="tab-force">
+          <div class="alert alert-danger" style="margin:0;">
+            <div class="alert-title">🚨 高风险操作</div>
+            适用于特殊合规要求或监管指令，将直接关闭订单并免除所有利息，<strong>不可撤销</strong>，需双重确认及审批单号。
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>操作原因 <span class="req">*</span></label>
+              <select>
+                <option value="">请选择</option>
+                <option>监管/合规指令</option>
+                <option>系统错误导致用户损失</option>
+                <option>其他（需说明）</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>审批单号 <span class="req">*</span></label>
+              <input type="text" placeholder="请输入内部审批单号" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>详细说明 <span class="req">*</span></label>
+            <textarea placeholder="请详细说明强制操作的原因和依据（必填）" style="min-height:90px;"></textarea>
+          </div>
+          <div class="confirm-check">
+            <input type="checkbox" id="chk-f1" onchange="toggleBtn2('btn-f','chk-f1','chk-f2')" />
+            <label for="chk-f1">我已获得上级审批，了解此操作将直接关闭订单</label>
+          </div>
+          <div class="confirm-check">
+            <input type="checkbox" id="chk-f2" onchange="toggleBtn2('btn-f','chk-f1','chk-f2')" />
+            <label for="chk-f2">我确认此操作不可撤销，操作将被完整记录</label>
+          </div>
+          <div class="submit-row">
+            <button class="btn" onclick="history.back()">取消</button>
+            <button class="btn btn-danger btn-lg" id="btn-f" disabled onclick="showSuccess('强制取消成功，订单已关闭')">强制确认取消成功</button>
+          </div>
+        </div>
+
+        <!-- 关闭申请 -->
+        <div class="tab-panel" id="tab-close">
+          <div class="alert alert-warning" style="margin:0;">
+            <div class="alert-title">⚠ 适用场景</div>
+            <ul>
+              <li>用户主动要求放弃取消，或申请存在异常需要关闭</li>
+              <li>操作后申请状态变更为"已关闭"，订单恢复正常计息</li>
+              <li>取消机会已消耗，本订单不再支持取消</li>
+            </ul>
+          </div>
+          <div class="form-group">
+            <label>关闭原因 <span class="req">*</span></label>
+            <select>
+              <option value="">请选择</option>
+              <option>用户主动要求关闭</option>
+              <option>申请信息异常</option>
+              <option>其他</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>备注</label>
+            <textarea placeholder="请填写详细说明（选填）"></textarea>
+          </div>
+          <div class="confirm-check">
+            <input type="checkbox" id="chk-cl" onchange="toggleBtn('btn-cl','chk-cl')" />
+            <label for="chk-cl">我确认关闭此取消申请，订单将恢复正常计息</label>
+          </div>
+          <div class="submit-row">
+            <button class="btn" onclick="history.back()">取消</button>
+            <button class="btn btn-danger btn-lg" id="btn-cl" disabled onclick="showSuccess('申请已关闭，订单恢复正常计息')">确认关闭申请</button>
+          </div>
+        </div>
+
+        <!-- 触发重试 -->
+        <div class="tab-panel" id="tab-retry">
+          <div class="alert alert-warning" style="margin:0;">
+            <div class="alert-title">⚠ 适用场景</div>
+            <ul>
+              <li>申请处于"处理失败"状态，自动重试已耗尽（3/3），需人工触发</li>
+              <li>操作后重置重试计数，重新执行还款核实流程</li>
+              <li>当前重试次数：<strong>0 / 3</strong>（自动重试未耗尽时建议等待）</li>
+            </ul>
+          </div>
+          <div class="form-group">
+            <label>触发原因 <span class="req">*</span></label>
+            <select id="retry-reason" onchange="checkRetry()">
+              <option value="">请选择</option>
+              <option>还款服务已恢复，手动触发</option>
+              <option>自动重试耗尽，人工介入</option>
+              <option>其他</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>备注</label>
+            <textarea placeholder="请填写详细说明（选填）"></textarea>
+          </div>
+          <div class="confirm-check">
+            <input type="checkbox" id="chk-r" onchange="checkRetry()" />
+            <label for="chk-r">我确认当前申请状态需要触发重试，了解此操作将重新执行还款核实流程</label>
+          </div>
+          <div class="submit-row">
+            <button class="btn" onclick="history.back()">取消</button>
+            <button class="btn btn-primary btn-lg" id="btn-r" disabled onclick="showSuccess('重试已触发，请等待系统处理')">触发重试</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Right -->
+  <div class="right-panel">
+    <div class="card">
+      <div class="card-title">订单摘要</div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="ig-item"><div class="label">申请编号</div><div class="value">CAN-20260410-001</div></div>
+          <div class="ig-item"><div class="label">当前状态</div><div class="value"><span class="tag tag-repayment">待还款</span></div></div>
+          <div class="ig-item"><div class="label">订单编号</div><div class="value">ORD-88821</div></div>
+          <div class="ig-item"><div class="label">用户手机号</div><div class="value">+92 300 *** 4521</div></div>
+          <div class="ig-item"><div class="label">操作类型</div><div class="value"><span class="tag tag-user">用户自助</span></div></div>
+          <div class="ig-item"><div class="label">取消原因</div><div class="value">不再需要</div></div>
+          <div class="ig-item"><div class="label">申请时间</div><div class="value">2026-04-10 09:12</div></div>
+          <div class="ig-item"><div class="label">还款截止</div><div class="value orange">2026-04-11 09:22</div></div>
+        </div>
+        <div class="fee-sum">
+          <div class="fs-row"><span class="fl">放款本金</span><span class="fv">PKR 5,000.00</span></div>
+          <div class="fs-row"><span class="fl">取消手续费（1%）</span><span class="fv">PKR 50.00</span></div>
+          <hr class="fs-div" />
+          <div class="fs-row total"><span class="fl">用户应还总额</span><span class="fv">PKR 5,050.00</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">最近操作记录</div>
+      <div class="card-body" style="padding:0;">
+        <table>
+          <thead><tr><th>时间</th><th>操作人</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td>04-10 09:22</td><td>用户</td><td>确认取消</td></tr>
+            <tr><td>04-10 09:22</td><td>系统</td><td>生成还款指令</td></tr>
+            <tr><td>04-10 09:22</td><td>系统</td><td>利息冻结</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="icon">✅</div>
+    <div class="title">操作提交成功</div>
+    <div class="desc" id="modal-desc">操作已记录至审计日志，申请状态已更新</div>
+    <div class="actions">
+      <button class="btn" onclick="location.href='index.html'">返回列表</button>
+      <button class="btn btn-primary" onclick="location.href='detail.html'">查看详情</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchTab(name) {
+    const tabs = ['confirm','force','close','retry'];
+    tabs.forEach((t, i) => {
+      document.querySelectorAll('.op-tab')[i].classList.toggle('active', t === name);
+      document.getElementById('tab-' + t).classList.toggle('active', t === name);
+    });
+  }
+  function toggleBtn(btnId, chkId) {
+    document.getElementById(btnId).disabled = !document.getElementById(chkId).checked;
+  }
+  function toggleBtn2(btnId, c1, c2) {
+    document.getElementById(btnId).disabled = !(document.getElementById(c1).checked && document.getElementById(c2).checked);
+  }
+  function checkRetry() {
+    const reason = document.getElementById('retry-reason').value;
+    const checked = document.getElementById('chk-r').checked;
+    document.getElementById('btn-r').disabled = !(reason && checked);
+  }
+  function showSuccess(msg) {
+    document.getElementById('modal-desc').textContent = msg;
+    document.getElementById('modal').classList.add('show');
+  }
+</script>
+</body>
+</html>

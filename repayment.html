@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>还款管理</title>
+  <link rel="stylesheet" href="common.css" />
+  <style>
+    .page-header { padding: 10px 24px 14px; display: flex; align-items: center; justify-content: space-between; }
+    .page-header h1 { font-size: 18px; font-weight: 600; }
+    .filter-card { margin: 0 24px 14px; }
+    .filter-body { padding: 18px 20px 6px; }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 14px 20px; align-items: flex-end; }
+    .fi { display: flex; flex-direction: column; gap: 5px; min-width: 150px; }
+    .fi label { font-size: 12px; color: #666; }
+    .fi select, .fi input { height: 32px; }
+    .fi-date { min-width: 240px; }
+    .fi-date .di { display: flex; align-items: center; gap: 6px; }
+    .fi-date input { width: 105px; height: 32px; }
+    .filter-actions { display: flex; gap: 8px; padding-bottom: 12px; margin-left: auto; }
+    .table-card { margin: 0 24px 24px; }
+    .table-toolbar { padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f0f0f0; }
+    .toolbar-right { display: flex; gap: 6px; }
+    .icon-btn { width: 32px; height: 32px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #666; }
+    .icon-btn:hover { border-color: #1a7a4a; color: #1a7a4a; }
+    input[type=checkbox] { cursor: pointer; accent-color: #1a7a4a; }
+
+    /* Cancel eligibility tooltip */
+    .cancel-eligible { color: #1a7a4a; font-size: 12px; }
+    .cancel-ineligible { color: #999; font-size: 12px; }
+
+    /* Inline cancel modal */
+    .modal { width: 480px; text-align: left; }
+    .modal h3 { font-size: 15px; font-weight: 700; margin-bottom: 16px; color: #222; }
+    .modal-order-info { background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 6px; padding: 12px 16px; margin-bottom: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .moi-item .label { font-size: 12px; color: #666; }
+    .moi-item .value { font-size: 13px; font-weight: 600; color: #333; }
+    .moi-item .value.green { color: #1a7a4a; }
+    .modal-form { display: flex; flex-direction: column; gap: 12px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; padding-top: 14px; border-top: 1px solid #f0f0f0; }
+    .confirm-check { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; }
+    .confirm-check input { margin-top: 2px; accent-color: #1a7a4a; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">PaisaGhur</div>
+  <nav>
+    <a href="#">系统管理</a><a href="#">催收审核</a><a href="#">逾观审核</a>
+    <a href="#">催收</a><a href="#" class="active">运营</a><a href="#">客服</a>
+    <a href="#">报表</a><a href="#">营销</a><a href="#">财务</a>
+  </nav>
+  <div class="user"><div class="avatar">何</div>HeQiuChan</div>
+</div>
+<div class="subnav">
+  <a href="index.html">冷静期取消订单管理</a>
+</div>
+<div class="breadcrumb">
+  <a href="#">运营</a><span>/</span>还款管理
+</div>
+
+<div class="page-header">
+  <h1>还款管理</h1>
+</div>
+
+<!-- Filter -->
+<div class="card filter-card">
+  <div class="filter-body">
+    <div class="filter-row">
+      <div class="fi">
+        <label>还款状态</label>
+        <select><option value="">全部</option><option>还款中</option><option>已还清</option><option>逾期</option></select>
+      </div>
+      <div class="fi">
+        <label>订单编号</label>
+        <input type="text" placeholder="请输入" />
+      </div>
+      <div class="fi">
+        <label>用户手机号</label>
+        <input type="text" placeholder="请输入" />
+      </div>
+      <div class="fi fi-date">
+        <label>放款时间</label>
+        <div class="di"><input type="date" /><span style="color:#999">~</span><input type="date" /></div>
+      </div>
+      <div class="filter-actions">
+        <button class="btn btn-ghost">重置</button>
+        <button class="btn btn-primary">查询</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="card table-card">
+  <div class="table-toolbar">
+    <div></div>
+    <div class="toolbar-right">
+      <button class="icon-btn" title="刷新">↻</button>
+      <button class="icon-btn" title="导出">↓</button>
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:36px"><input type="checkbox" /></th>
+        <th>订单编号</th>
+        <th>用户手机号</th>
+        <th>放款金额 (PKR)</th>
+        <th>放款时间</th>
+        <th>应还日期</th>
+        <th>还款状态</th>
+        <th>冷静期取消资格</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Row 1: eligible for cancellation -->
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>ORD-88821</td>
+        <td>+92 300 *** 4521</td>
+        <td>5,000.00</td>
+        <td>2026-04-10 08:00</td>
+        <td>2026-04-24</td>
+        <td><span class="tag" style="background:#e6f7ff;color:#1890ff;border:1px solid #91d5ff;">还款中</span></td>
+        <td>
+          <span class="cancel-eligible">✓ 可取消</span>
+          <div style="font-size:11px;color:#999;">窗口剩余 18h 43m</div>
+        </td>
+        <td>
+          <a href="detail.html" class="link">查看</a>
+          <span class="sep">|</span>
+          <a class="link" onclick="openCancelModal('ORD-88821', '5,000.00', '50.00', '5,050.00', '2026-04-11 08:00:00')">申请取消</a>
+        </td>
+      </tr>
+      <!-- Row 2: eligible -->
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>ORD-88900</td>
+        <td>+92 333 *** 5566</td>
+        <td>7,000.00</td>
+        <td>2026-04-10 06:30</td>
+        <td>2026-04-24</td>
+        <td><span class="tag" style="background:#e6f7ff;color:#1890ff;border:1px solid #91d5ff;">还款中</span></td>
+        <td>
+          <span class="cancel-eligible">✓ 可取消</span>
+          <div style="font-size:11px;color:#999;">窗口剩余 20h 12m</div>
+        </td>
+        <td>
+          <a href="#" class="link">查看</a>
+          <span class="sep">|</span>
+          <a class="link" onclick="openCancelModal('ORD-88900', '7,000.00', '70.00', '7,070.00', '2026-04-11 06:30:00')">申请取消</a>
+        </td>
+      </tr>
+      <!-- Row 3: window expired -->
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>ORD-88601</td>
+        <td>+92 333 *** 1122</td>
+        <td>8,000.00</td>
+        <td>2026-04-09 14:00</td>
+        <td>2026-04-23</td>
+        <td><span class="tag" style="background:#e6f7ff;color:#1890ff;border:1px solid #91d5ff;">还款中</span></td>
+        <td>
+          <span class="cancel-ineligible">✗ 窗口已关闭</span>
+          <div style="font-size:11px;color:#999;">截止 2026-04-10 14:00</div>
+        </td>
+        <td>
+          <a href="#" class="link">查看</a>
+          <span class="sep">|</span>
+          <span style="color:#d9d9d9;font-size:13px;cursor:not-allowed;" title="取消窗口已关闭">申请取消</span>
+        </td>
+      </tr>
+      <!-- Row 4: already has cancellation request -->
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>ORD-88756</td>
+        <td>+92 321 *** 7890</td>
+        <td>3,000.00</td>
+        <td>2026-04-10 07:00</td>
+        <td>2026-04-24</td>
+        <td><span class="tag tag-repayment">取消待还款</span></td>
+        <td>
+          <span class="cancel-ineligible">✗ 已有申请记录</span>
+          <div style="font-size:11px;"><a href="detail.html" class="link" style="font-size:11px;">查看申请 →</a></div>
+        </td>
+        <td>
+          <a href="detail.html" class="link">查看</a>
+          <span class="sep">|</span>
+          <span style="color:#d9d9d9;font-size:13px;cursor:not-allowed;" title="已有取消申请记录">申请取消</span>
+        </td>
+      </tr>
+      <!-- Row 5: repaid -->
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>ORD-88400</td>
+        <td>+92 300 *** 2233</td>
+        <td>6,000.00</td>
+        <td>2026-04-08 10:00</td>
+        <td>2026-04-22</td>
+        <td><span class="tag tag-success">已还清</span></td>
+        <td><span class="cancel-ineligible">✗ 订单已结清</span></td>
+        <td>
+          <a href="#" class="link">查看</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="pagination">
+    <span class="total">共 3,421 条</span>
+    <button class="page-btn">«</button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <button class="page-btn">…</button>
+    <button class="page-btn">»</button>
+    <select class="page-size"><option>30条/页</option><option>50条/页</option><option>100条/页</option></select>
+  </div>
+</div>
+
+<!-- Cancel Modal -->
+<div class="modal-overlay" id="cancel-modal">
+  <div class="modal">
+    <h3>人工申请取消 · <span id="m-order"></span></h3>
+    <div class="modal-order-info">
+      <div class="moi-item"><div class="label">放款本金 (PKR)</div><div class="value green" id="m-principal"></div></div>
+      <div class="moi-item"><div class="label">取消手续费 (PKR)</div><div class="value" id="m-fee"></div></div>
+      <div class="moi-item"><div class="label">用户应还总额 (PKR)</div><div class="value green" id="m-total"></div></div>
+      <div class="moi-item"><div class="label">取消窗口截止</div><div class="value" style="color:#fa8c16;" id="m-deadline"></div></div>
+    </div>
+    <div class="alert alert-warning" style="margin-bottom:12px;">
+      <ul>
+        <li>客服代发起后系统直接生成还款指令，无需用户二次确认</li>
+        <li>请引导用户在截止时间前完成还款</li>
+        <li>此操作消耗该订单唯一取消机会，不可撤销</li>
+      </ul>
+    </div>
+    <div class="modal-form">
+      <div class="form-group">
+        <label>取消原因 <span class="req">*</span></label>
+        <select id="m-reason" onchange="checkModal()">
+          <option value="">请选择</option>
+          <option>不再需要</option>
+          <option>资金已够用</option>
+          <option>利率太高</option>
+          <option>用户投诉</option>
+          <option>其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>备注（选填）</label>
+        <textarea placeholder="如有其他需要记录的信息，请填写" style="min-height:60px;"></textarea>
+      </div>
+      <div class="confirm-check">
+        <input type="checkbox" id="m-chk" onchange="checkModal()" />
+        <label for="m-chk">我已与用户确认取消意愿，了解此操作将直接生成还款指令且不可撤销</label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary btn-lg" id="m-btn" disabled onclick="submitCancel()">确认代发起取消申请</button>
+    </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal" style="width:380px;text-align:center;">
+    <div style="font-size:48px;margin-bottom:12px;">✅</div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:8px;">取消申请已成功发起</div>
+    <div style="font-size:13px;color:#666;margin-bottom:6px;">请引导用户在截止时间前完成还款</div>
+    <div style="font-size:20px;font-weight:700;color:#1a7a4a;margin:12px 0;" id="s-amount"></div>
+    <div style="font-size:13px;color:#fa8c16;font-weight:600;margin-bottom:20px;" id="s-deadline"></div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button class="btn" onclick="location.reload()">返回还款管理</button>
+      <button class="btn btn-primary" onclick="location.href='index.html'">查看取消申请列表</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentOrder = {};
+
+  function openCancelModal(order, principal, fee, total, deadline) {
+    currentOrder = { order, principal, fee, total, deadline };
+    document.getElementById('m-order').textContent = order;
+    document.getElementById('m-principal').textContent = principal;
+    document.getElementById('m-fee').textContent = fee;
+    document.getElementById('m-total').textContent = total;
+    document.getElementById('m-deadline').textContent = deadline;
+    document.getElementById('m-reason').value = '';
+    document.getElementById('m-chk').checked = false;
+    document.getElementById('m-btn').disabled = true;
+    document.getElementById('cancel-modal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('cancel-modal').classList.remove('show');
+  }
+
+  function checkModal() {
+    const reason = document.getElementById('m-reason').value;
+    const checked = document.getElementById('m-chk').checked;
+    document.getElementById('m-btn').disabled = !(reason && checked);
+  }
+
+  function submitCancel() {
+    document.getElementById('cancel-modal').classList.remove('show');
+    document.getElementById('s-amount').textContent = 'PKR ' + currentOrder.total;
+    document.getElementById('s-deadline').textContent = '还款截止：' + currentOrder.deadline;
+    document.getElementById('success-modal').classList.add('show');
+  }
+</script>
+</body>
+</html>

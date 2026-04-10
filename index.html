@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>冷静期取消订单管理</title>
+  <link rel="stylesheet" href="common.css" />
+  <style>
+    .page-header { padding: 10px 24px 14px; display: flex; align-items: center; justify-content: space-between; }
+    .page-header h1 { font-size: 18px; font-weight: 600; color: #222; }
+
+    /* Filter */
+    .filter-card { margin: 0 24px 14px; }
+    .filter-body { padding: 18px 20px 6px; }
+    .filter-row { display: flex; flex-wrap: wrap; gap: 14px 20px; align-items: flex-end; }
+    .fi { display: flex; flex-direction: column; gap: 5px; min-width: 150px; }
+    .fi label { font-size: 12px; color: #666; }
+    .fi select, .fi input { height: 32px; }
+    .fi-date { min-width: 240px; }
+    .fi-date .di { display: flex; align-items: center; gap: 6px; }
+    .fi-date input { width: 105px; height: 32px; }
+    .filter-actions { display: flex; gap: 8px; padding-bottom: 12px; margin-left: auto; }
+
+    /* Stats */
+    .stats { margin: 0 24px 12px; display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; align-items: center; }
+    .si { color: #666; }
+    .si .v { font-weight: 600; cursor: pointer; }
+    .v-green  { color: #1a7a4a; }
+    .v-orange { color: #fa8c16; }
+    .v-red    { color: #f5222d; }
+    .sdiv { color: #d9d9d9; }
+
+    /* Table card */
+    .table-card { margin: 0 24px 24px; }
+    .table-toolbar { padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f0f0f0; }
+    .toolbar-left { display: flex; gap: 8px; }
+    .toolbar-right { display: flex; gap: 6px; }
+    .icon-btn { width: 32px; height: 32px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #666; }
+    .icon-btn:hover { border-color: #1a7a4a; color: #1a7a4a; }
+    input[type=checkbox] { cursor: pointer; accent-color: #1a7a4a; }
+  </style>
+</head>
+<body>
+
+<!-- Top Nav -->
+<div class="topbar">
+  <div class="logo">PaisaGhur</div>
+  <nav>
+    <a href="#">系统管理</a>
+    <a href="#">催收审核</a>
+    <a href="#">逾观审核</a>
+    <a href="#">催收</a>
+    <a href="#" class="active">运营</a>
+    <a href="#">客服</a>
+    <a href="#">报表</a>
+    <a href="#">营销</a>
+    <a href="#">财务</a>
+  </nav>
+  <div class="user"><div class="avatar">何</div>HeQiuChan</div>
+</div>
+
+<!-- Sub Nav -->
+<div class="subnav">
+  <a href="index.html" class="active">冷静期取消订单管理</a>
+</div>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+  <a href="#">运营</a><span>/</span>冷静期取消订单管理
+</div>
+
+<div class="page-header">
+  <h1>冷静期取消订单管理</h1>
+  <button class="btn btn-primary" onclick="location.href='new-request.html'">+ 新建取消申请</button>
+</div>
+
+<!-- Filter -->
+<div class="card filter-card">
+  <div class="filter-body">
+    <div class="filter-row">
+      <div class="fi">
+        <label>申请状态</label>
+        <select>
+          <option value="">全部状态</option>
+          <option>待确认</option>
+          <option>待还款</option>
+          <option>取消成功</option>
+          <option>已超时</option>
+          <option>还款超时</option>
+          <option>已撤回</option>
+          <option>处理失败</option>
+        </select>
+      </div>
+      <div class="fi">
+        <label>订单编号</label>
+        <input type="text" placeholder="请输入" />
+      </div>
+      <div class="fi">
+        <label>用户手机号</label>
+        <input type="text" placeholder="请输入" />
+      </div>
+      <div class="fi">
+        <label>操作类型</label>
+        <select>
+          <option value="">全部</option>
+          <option>用户自助</option>
+          <option>客服代发起</option>
+        </select>
+      </div>
+      <div class="fi fi-date">
+        <label>申请时间</label>
+        <div class="di">
+          <input type="date" /><span style="color:#999">~</span><input type="date" />
+        </div>
+      </div>
+      <div class="filter-actions">
+        <button class="btn btn-ghost">重置</button>
+        <button class="btn btn-primary">查询</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="si">全部：<span class="v v-green">1,284</span></div><div class="sdiv">|</div>
+  <div class="si">待确认：<span class="v v-orange">23</span></div><div class="sdiv">|</div>
+  <div class="si">待还款：<span class="v v-orange">87</span></div><div class="sdiv">|</div>
+  <div class="si">取消成功：<span class="v v-green">1,041</span></div><div class="sdiv">|</div>
+  <div class="si">处理失败（需人工）：<span class="v v-red">5</span></div><div class="sdiv">|</div>
+  <div class="si">今日新增：<span class="v v-green">34</span></div>
+</div>
+
+<!-- Table -->
+<div class="card table-card">
+  <div class="table-toolbar">
+    <div class="toolbar-left">
+      <button class="btn" style="font-size:12px;" disabled>批量导出</button>
+    </div>
+    <div class="toolbar-right">
+      <button class="icon-btn" title="刷新">↻</button>
+      <button class="icon-btn" title="导出">↓</button>
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:36px"><input type="checkbox" /></th>
+        <th>申请编号</th>
+        <th>订单编号</th>
+        <th>用户手机号</th>
+        <th>放款本金 (PKR)</th>
+        <th>应还总额 (PKR)</th>
+        <th>操作类型</th>
+        <th>取消原因</th>
+        <th>申请时间</th>
+        <th>还款截止</th>
+        <th>状态</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td><a href="detail.html" class="link">CAN-20260410-001</a></td>
+        <td>ORD-88821</td>
+        <td>+92 300 *** 4521</td>
+        <td>5,000.00</td>
+        <td>5,050.00</td>
+        <td><span class="tag tag-user">用户自助</span></td>
+        <td>不再需要</td>
+        <td>2026-04-10 09:12</td>
+        <td style="color:#fa8c16">2026-04-11 09:22</td>
+        <td><span class="tag tag-repayment">待还款</span></td>
+        <td><a href="detail.html" class="link">查看</a><span class="sep">|</span><a href="manual-cancel.html" class="link">人工操作</a></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td><a href="detail.html" class="link">CAN-20260410-002</a></td>
+        <td>ORD-88756</td>
+        <td>+92 321 *** 7890</td>
+        <td>3,000.00</td>
+        <td>3,030.00</td>
+        <td><span class="tag tag-agent">客服代发起</span></td>
+        <td>用户投诉</td>
+        <td>2026-04-10 08:45</td>
+        <td style="color:#fa8c16">2026-04-11 08:55</td>
+        <td><span class="tag tag-repayment">待还款</span></td>
+        <td><a href="detail.html" class="link">查看</a><span class="sep">|</span><a href="manual-cancel.html" class="link">人工操作</a></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td><a href="detail.html" class="link">CAN-20260410-003</a></td>
+        <td>ORD-88740</td>
+        <td>+92 333 *** 0011</td>
+        <td>4,500.00</td>
+        <td>4,545.00</td>
+        <td><span class="tag tag-user">用户自助</span></td>
+        <td>利率太高</td>
+        <td>2026-04-10 07:30</td>
+        <td>—</td>
+        <td><span class="tag tag-pending">待确认</span></td>
+        <td><a href="detail.html" class="link">查看</a></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td><a href="detail.html" class="link">CAN-20260409-098</a></td>
+        <td>ORD-88601</td>
+        <td>+92 333 *** 1122</td>
+        <td>8,000.00</td>
+        <td>8,080.00</td>
+        <td><span class="tag tag-user">用户自助</span></td>
+        <td>资金已够用</td>
+        <td>2026-04-09 14:30</td>
+        <td>—</td>
+        <td><span class="tag tag-success">取消成功</span></td>
+        <td><a href="detail.html" class="link">查看</a></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td><a href="detail.html" class="link">CAN-20260409-097</a></td>
+        <td>ORD-88590</td>
+        <td>+92 312 *** 3344</td>
+        <td>2,500.00</td>
+        <td>2,525.00</td>
+        <td><span class="tag tag-agent">客服代发起</span></td>
+        <td>用户投诉</td>
+        <td>2026-04-09 11:05</td>
+        <td>—</td>
+        <td><span class="tag tag-overdue">还款超时</span></td>
+        <td><a href="detail.html" class="link">查看</a><span class="sep">|</span><a href="manual-cancel.html" class="link">人工操作</a></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td><a href="detail.html" class="link">CAN-20260408-041</a></td>
+        <td>ORD-88200</td>
+        <td>+92 321 *** 7711</td>
+        <td>4,000.00</td>
+        <td>4,040.00</td>
+        <td><span class="tag tag-agent">客服代发起</span></td>
+        <td>用户投诉</td>
+        <td>2026-04-08 10:15</td>
+        <td>—</td>
+        <td><span class="tag tag-failed">处理失败</span></td>
+        <td><a href="detail.html" class="link">查看</a><span class="sep">|</span><a href="manual-cancel.html" class="link link-danger">人工介入</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="pagination">
+    <span class="total">共 1,284 条</span>
+    <button class="page-btn">«</button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <button class="page-btn">…</button>
+    <button class="page-btn">43</button>
+    <button class="page-btn">»</button>
+    <select class="page-size"><option>30条/页</option><option>50条/页</option><option>100条/页</option></select>
+  </div>
+</div>
+
+</body>
+</html>

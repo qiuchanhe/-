@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>申请详情</title>
+  <link rel="stylesheet" href="common.css" />
+  <style>
+    .page-header { padding: 10px 24px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .page-header h1 { font-size: 18px; font-weight: 600; }
+    .content { padding: 0 24px 32px; display: flex; flex-direction: column; gap: 16px; }
+
+    /* Status banner */
+    .status-banner { background: #fff; border-radius: 6px; padding: 18px 24px; box-shadow: 0 1px 4px rgba(0,0,0,.06); display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+    .sb-item { display: flex; flex-direction: column; gap: 4px; }
+    .sb-item .label { font-size: 12px; color: #999; }
+    .sb-item .value { font-size: 13px; font-weight: 600; color: #333; }
+    .sb-item .value.big { font-size: 20px; color: #722ed1; }
+    .sb-div { width: 1px; height: 44px; background: #f0f0f0; }
+    .countdown { margin-left: auto; background: #fff7e6; border: 1px solid #ffd591; border-radius: 6px; padding: 10px 18px; text-align: center; }
+    .countdown .label { font-size: 12px; color: #fa8c16; }
+    .countdown .time { font-size: 20px; font-weight: 700; color: #fa8c16; font-variant-numeric: tabular-nums; }
+
+    /* Desc grid */
+    .desc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 16px; }
+    .di { display: flex; flex-direction: column; gap: 3px; }
+    .di .label { font-size: 12px; color: #999; }
+    .di .value { font-size: 13px; font-weight: 500; color: #333; }
+    .di .value.green { color: #1a7a4a; font-weight: 700; font-size: 15px; }
+    .di .value.orange { color: #fa8c16; }
+
+    /* Fee box */
+    .fee-box { background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 6px; padding: 14px 20px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+    .fb-item .label { font-size: 12px; color: #666; margin-bottom: 3px; }
+    .fb-item .value { font-size: 15px; font-weight: 700; color: #333; }
+    .fb-item .value.total { color: #1a7a4a; font-size: 18px; }
+    .fb-sep { font-size: 18px; color: #b7eb8f; }
+
+    /* Timeline */
+    .tl { padding: 4px 0; }
+    .tl-item { display: flex; gap: 14px; padding-bottom: 18px; }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-left { display: flex; flex-direction: column; align-items: center; width: 18px; flex-shrink: 0; }
+    .tl-dot { width: 10px; height: 10px; border-radius: 50%; background: #1a7a4a; flex-shrink: 0; margin-top: 3px; }
+    .tl-dot.gray { background: #d9d9d9; }
+    .tl-dot.orange { background: #fa8c16; }
+    .tl-line { flex: 1; width: 2px; background: #f0f0f0; margin-top: 4px; }
+    .tl-item:last-child .tl-line { display: none; }
+    .tl-title { font-size: 13px; font-weight: 600; color: #333; }
+    .tl-time { font-size: 12px; color: #999; margin-top: 2px; }
+    .tl-desc { font-size: 12px; color: #666; margin-top: 5px; background: #fafafa; border-radius: 4px; padding: 6px 10px; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">PaisaGhur</div>
+  <nav>
+    <a href="#">系统管理</a><a href="#">催收审核</a><a href="#">逾观审核</a>
+    <a href="#">催收</a><a href="#" class="active">运营</a><a href="#">客服</a>
+    <a href="#">报表</a><a href="#">营销</a><a href="#">财务</a>
+  </nav>
+  <div class="user"><div class="avatar">何</div>HeQiuChan</div>
+</div>
+<div class="subnav">
+  <a href="index.html" class="active">冷静期取消订单管理</a>
+</div>
+<div class="breadcrumb">
+  <a href="#">运营</a><span>/</span><a href="index.html">冷静期取消订单管理</a><span>/</span>申请详情
+</div>
+
+<div class="page-header">
+  <h1>申请详情 · CAN-20260410-001</h1>
+  <div style="display:flex;gap:8px;">
+    <button class="btn" onclick="history.back()">← 返回列表</button>
+    <button class="btn btn-primary" id="btn-manual" onclick="location.href='manual-cancel.html'" style="display:none;">人工操作</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- Status Banner -->
+  <div class="status-banner">
+    <div class="sb-item"><div class="label">当前状态</div><div class="value big">待还款</div></div>
+    <div class="sb-div"></div>
+    <div class="sb-item"><div class="label">申请编号</div><div class="value">CAN-20260410-001</div></div>
+    <div class="sb-div"></div>
+    <div class="sb-item"><div class="label">操作类型</div><div class="value"><span class="tag tag-user">用户自助</span></div></div>
+    <div class="sb-div"></div>
+    <div class="sb-item"><div class="label">申请时间</div><div class="value">2026-04-10 09:12:34</div></div>
+    <div class="countdown">
+      <div class="label">还款剩余时间</div>
+      <div class="time">18:43:22</div>
+    </div>
+  </div>
+
+  <!-- Order Info -->
+  <div class="card">
+    <div class="card-title">订单信息</div>
+    <div class="card-body">
+      <div class="desc-grid">
+        <div class="di"><div class="label">订单编号</div><div class="value">ORD-88821</div></div>
+        <div class="di"><div class="label">用户手机号</div><div class="value">+92 300 *** 4521</div></div>
+        <div class="di"><div class="label">APP</div><div class="value">PaisaGhur</div></div>
+        <div class="di"><div class="label">平台</div><div class="value">Android</div></div>
+        <div class="di"><div class="label">放款金额 (PKR)</div><div class="value green">5,000.00</div></div>
+        <div class="di"><div class="label">放款时间</div><div class="value">2026-04-10 08:00:00</div></div>
+        <div class="di"><div class="label">取消窗口截止</div><div class="value orange">2026-04-11 08:00:00</div></div>
+        <div class="di"><div class="label">产品</div><div class="value">paisa_pay_day</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fee Detail -->
+  <div class="card">
+    <div class="card-title">费用明细（快照）</div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+      <div class="fee-box">
+        <div class="fb-item"><div class="label">放款本金 (PKR)</div><div class="value">5,000.00</div></div>
+        <div class="fb-sep">+</div>
+        <div class="fb-item"><div class="label">取消手续费 (PKR)</div><div class="value">50.00</div></div>
+        <div class="fb-item" style="margin-left:4px;"><div class="label">费率（快照）</div><div class="value" style="font-size:13px;color:#999;">1.00%</div></div>
+        <div class="fb-sep" style="margin-left:auto;">=</div>
+        <div class="fb-item"><div class="label">用户应还总额 (PKR)</div><div class="value total">5,050.00</div></div>
+      </div>
+      <div style="font-size:12px;color:#999;">* 费率快照于申请确认时（2026-04-10 09:12:34）锁定，后续费率变更不影响本申请。</div>
+    </div>
+  </div>
+
+  <!-- Cancellation Info -->
+  <div class="card">
+    <div class="card-title">取消申请信息</div>
+    <div class="card-body">
+      <div class="desc-grid">
+        <div class="di"><div class="label">取消原因</div><div class="value">不再需要</div></div>
+        <div class="di"><div class="label">确认时间</div><div class="value">2026-04-10 09:22:10</div></div>
+        <div class="di"><div class="label">还款截止时间</div><div class="value orange">2026-04-11 09:22:10</div></div>
+        <div class="di"><div class="label">还款指令编号</div><div class="value">RPY-20260410-8821</div></div>
+        <div class="di"><div class="label">确认窗口截止</div><div class="value">2026-04-10 11:12:34</div></div>
+        <div class="di"><div class="label">重试次数</div><div class="value">0 / 3</div></div>
+        <div class="di" style="grid-column:span 2;"><div class="label">备注</div><div class="value">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="card">
+    <div class="card-title">处理时间线</div>
+    <div class="card-body">
+      <div class="tl">
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-title">放款成功</div>
+            <div class="tl-time">2026-04-10 08:00:00</div>
+            <div class="tl-desc">订单 ORD-88821 放款 PKR 5,000.00，24h 取消窗口开启</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-title">用户发起取消申请</div>
+            <div class="tl-time">2026-04-10 09:12:34</div>
+            <div class="tl-desc">用户选择原因：不再需要；进入费用确认页，确认窗口截止 11:12:34</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-title">用户确认取消，申请记录创建</div>
+            <div class="tl-time">2026-04-10 09:22:10</div>
+            <div class="tl-desc">费率快照锁定 1.00%，手续费 PKR 50.00，应还总额 PKR 5,050.00；还款指令 RPY-20260410-8821 生成，截止 2026-04-11 09:22:10</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot orange"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-title">等待用户还款</div>
+            <div class="tl-time">进行中</div>
+            <div class="tl-desc">用户需在 2026-04-11 09:22:10 前完成还款 PKR 5,050.00</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-dot gray"></div><div class="tl-line"></div></div>
+          <div>
+            <div class="tl-title">取消完成（待触发）</div>
+            <div class="tl-time">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit Log -->
+  <div class="card">
+    <div class="card-title">操作审计日志</div>
+    <div class="card-body" style="padding:0;">
+      <table>
+        <thead>
+          <tr><th>时间</th><th>操作人</th><th>操作类型</th><th>操作前状态</th><th>操作后状态</th><th>备注</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2026-04-10 09:22:10</td><td>用户 +92300***4521</td><td>确认取消</td><td>—</td><td>待还款</td><td>用户自助确认，费率快照 1%</td></tr>
+          <tr><td>2026-04-10 09:22:10</td><td>系统</td><td>生成还款指令</td><td>—</td><td>待还款</td><td>还款指令 RPY-20260410-8821</td></tr>
+          <tr><td>2026-04-10 09:22:10</td><td>系统</td><td>利息冻结</td><td>计息中</td><td>利息冻结</td><td>等待还款核实后正式免除</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // 仅在需要人工介入的状态下显示"人工操作"按钮，script 放 body 底部确保 DOM 已渲染
+  const actionableStatuses = ['待还款', '还款超时', '处理失败'];
+  const currentStatus = '待还款'; // 实际由后端注入
+  if (actionableStatuses.includes(currentStatus)) {
+    document.getElementById('btn-manual').style.display = 'inline-block';
+  }
+</script>
+</body>
+</html>

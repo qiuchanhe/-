@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>贷款取消功能 · 页面预览</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f0f2f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+    .wrap { width: 100%; max-width: 900px; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .header .logo { font-size: 13px; font-weight: 700; color: #1a7a4a; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+    .header h1 { font-size: 26px; font-weight: 700; color: #222; margin-bottom: 8px; }
+    .header p { font-size: 14px; color: #999; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card { background: #fff; border-radius: 10px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,.07); text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 10px; transition: transform .15s, box-shadow .15s; border: 1px solid #f0f0f0; }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.1); border-color: #b7eb8f; }
+    .card .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; background: #f6ffed; color: #1a7a4a; border: 1px solid #b7eb8f; width: fit-content; }
+    .card .badge.orange { background: #fff7e6; color: #fa8c16; border-color: #ffd591; }
+    .card h2 { font-size: 15px; font-weight: 700; color: #222; line-height: 1.4; }
+    .card p { font-size: 12px; color: #888; line-height: 1.7; flex: 1; }
+    .card .arrow { font-size: 13px; color: #1a7a4a; font-weight: 600; margin-top: 4px; }
+    .card .hint { font-size: 11px; color: #bbb; font-family: monospace; margin-top: 2px; }
+    .footer { text-align: center; margin-top: 32px; font-size: 12px; color: #ccc; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="logo">PaisaGhur · 运营后台</div>
+    <h1>贷款冷静期取消功能</h1>
+    <p>点击下方卡片预览对应页面</p>
+  </div>
+
+  <div class="grid">
+    <a href="index.html" class="card">
+      <span class="badge">运营 / 列表</span>
+      <h2>冷静期取消订单管理</h2>
+      <p>申请列表、状态筛选、统计数据。顶部"新建取消申请"按钮供客服代发起。</p>
+      <div class="arrow">查看页面 →</div>
+      <div class="hint">index.html</div>
+    </a>
+
+    <a href="new-request.html" class="card">
+      <span class="badge">运营 / 新建</span>
+      <h2>新建取消申请</h2>
+      <p>客服代发起流程，3步：查询订单 → 确认信息填写原因 → 发起完成。<br/>试输入 ORD-88590 / ORD-88756 / 其他</p>
+      <div class="arrow">查看页面 →</div>
+      <div class="hint">new-request.html</div>
+    </a>
+
+    <a href="detail.html" class="card">
+      <span class="badge">运营 / 详情</span>
+      <h2>申请详情</h2>
+      <p>状态 Banner、费用快照、处理时间线、审计日志。人工操作按钮按状态动态显示。</p>
+      <div class="arrow">查看页面 →</div>
+      <div class="hint">detail.html</div>
+    </a>
+
+    <a href="manual-cancel.html" class="card">
+      <span class="badge">运营 / 操作</span>
+      <h2>人工操作</h2>
+      <p>4种操作：确认还款核实 / 强制取消 / 关闭申请 / 触发重试。所有操作均需确认后才可提交。</p>
+      <div class="arrow">查看页面 →</div>
+      <div class="hint">manual-cancel.html</div>
+    </a>
+
+    <a href="repayment.html" class="card">
+      <span class="badge orange">运营 / 还款管理</span>
+      <h2>还款管理</h2>
+      <p>新增"冷静期取消资格"列，可发起时显示"申请取消"入口，不可发起时置灰并说明原因。</p>
+      <div class="arrow">查看页面 →</div>
+      <div class="hint">repayment.html</div>
+    </a>
+  </div>
+
+  <div class="footer">贷款取消功能 v1.2.0 · 2026-04-10</div>
+</div>
+</body>
+</html>

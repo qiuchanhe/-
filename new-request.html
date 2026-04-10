@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>新建取消申请</title>
+  <link rel="stylesheet" href="common.css" />
+  <style>
+    .page-header { padding: 10px 24px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .page-header h1 { font-size: 18px; font-weight: 600; }
+    .content { padding: 0 24px 40px; max-width: 860px; display: flex; flex-direction: column; gap: 16px; }
+
+    /* Step indicator */
+    .steps { display: flex; align-items: center; gap: 0; margin-bottom: 4px; }
+    .step { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #999; }
+    .step .num { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #d9d9d9; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; background: #fff; }
+    .step.active { color: #1a7a4a; }
+    .step.active .num { background: #1a7a4a; color: #fff; border-color: #1a7a4a; }
+    .step.done .num { background: #1a7a4a; color: #fff; border-color: #1a7a4a; }
+    .step.done { color: #1a7a4a; }
+    .step-line { flex: 1; height: 1px; background: #e8e8e8; margin: 0 8px; min-width: 40px; }
+    .step-line.done { background: #1a7a4a; }
+
+    /* Search box */
+    .search-row { display: flex; gap: 10px; align-items: flex-end; }
+    .search-row input { flex: 1; height: 36px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 0 12px; font-size: 14px; outline: none; }
+    .search-row input:focus { border-color: #1a7a4a; box-shadow: 0 0 0 2px rgba(26,122,74,.1); }
+
+    /* Order preview */
+    .order-preview { background: #fafafa; border: 1px solid #e8e8e8; border-radius: 6px; padding: 16px 20px; }
+    .op-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .op-item .label { font-size: 12px; color: #999; margin-bottom: 3px; }
+    .op-item .value { font-size: 13px; font-weight: 500; color: #333; }
+    .op-item .value.green { color: #1a7a4a; font-size: 15px; font-weight: 700; }
+    .op-item .value.orange { color: #fa8c16; }
+
+    /* Cannot-cancel banner */
+    .cannot-cancel { background: #fff1f0; border: 1px solid #ffa39e; border-radius: 6px; padding: 14px 18px; }
+    .cannot-cancel .cc-title { font-weight: 600; color: #820014; margin-bottom: 8px; font-size: 13px; }
+    .cannot-cancel .cc-reason { font-size: 13px; color: #820014; }
+    .cannot-cancel .cc-link { color: #1a7a4a; text-decoration: underline; cursor: pointer; margin-left: 8px; font-size: 13px; }
+
+    /* Fee preview */
+    .fee-preview { background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 6px; padding: 14px 20px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+    .fp-item .label { font-size: 12px; color: #666; margin-bottom: 3px; }
+    .fp-item .value { font-size: 15px; font-weight: 700; color: #333; }
+    .fp-item .value.total { color: #1a7a4a; font-size: 18px; }
+    .fp-sep { font-size: 18px; color: #b7eb8f; }
+
+    /* Form grid */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* Confirm area */
+    .confirm-check { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #333; }
+    .confirm-check input { margin-top: 2px; accent-color: #1a7a4a; cursor: pointer; }
+    .submit-row { display: flex; gap: 10px; justify-content: flex-end; padding-top: 12px; border-top: 1px solid #f0f0f0; margin-top: 4px; }
+
+    /* Success state */
+    .success-box { text-align: center; padding: 32px 20px; }
+    .success-box .icon { font-size: 52px; margin-bottom: 12px; }
+    .success-box .title { font-size: 18px; font-weight: 700; color: #222; margin-bottom: 8px; }
+    .success-box .desc { font-size: 13px; color: #666; margin-bottom: 6px; }
+    .success-box .amount { font-size: 22px; font-weight: 700; color: #1a7a4a; margin: 12px 0; }
+    .success-box .deadline { font-size: 13px; color: #fa8c16; font-weight: 600; margin-bottom: 24px; }
+    .success-box .actions { display: flex; gap: 10px; justify-content: center; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">PaisaGhur</div>
+  <nav>
+    <a href="#">系统管理</a><a href="#">催收审核</a><a href="#">逾观审核</a>
+    <a href="#">催收</a><a href="#" class="active">运营</a><a href="#">客服</a>
+    <a href="#">报表</a><a href="#">营销</a><a href="#">财务</a>
+  </nav>
+  <div class="user"><div class="avatar">何</div>HeQiuChan</div>
+</div>
+<div class="subnav">
+  <a href="index.html" class="active">冷静期取消订单管理</a>
+</div>
+<div class="breadcrumb">
+  <a href="#">运营</a><span>/</span><a href="index.html">冷静期取消订单管理</a><span>/</span>新建取消申请
+</div>
+<div class="page-header">
+  <h1>新建取消申请（客服代发起）</h1>
+  <button class="btn" onclick="location.href='index.html'">← 返回列表</button>
+</div>
+
+<div class="content">
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step active" id="s1"><div class="num">1</div>查询订单</div>
+    <div class="step-line" id="sl1"></div>
+    <div class="step" id="s2"><div class="num">2</div>确认信息 & 填写原因</div>
+    <div class="step-line" id="sl2"></div>
+    <div class="step" id="s3"><div class="num">3</div>发起完成</div>
+  </div>
+
+  <!-- Step 1: Search -->
+  <div class="card" id="panel-search">
+    <div class="card-title">第一步：查询订单</div>
+    <div class="card-body">
+      <div class="alert alert-info" style="margin-bottom:14px;">
+        输入用户订单号，系统将自动校验该订单是否满足取消条件。
+      </div>
+      <div class="search-row">
+        <div style="display:flex;flex-direction:column;gap:5px;flex:1;">
+          <label style="font-size:12px;color:#666;">订单编号 <span style="color:#f5222d">*</span></label>
+          <input type="text" id="order-input" placeholder="请输入订单编号，如 ORD-88821" />
+        </div>
+        <button class="btn btn-primary" style="height:36px;" onclick="doSearch()">查询</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Order Info + Cannot Cancel (hidden by default, shown after search) -->
+
+  <!-- Case A: CAN cancel -->
+  <div class="card" id="panel-can-cancel" style="display:none;">
+    <div class="card-title">订单信息确认</div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:16px;">
+      <div class="order-preview">
+        <div class="op-grid">
+          <div class="op-item"><div class="label">订单编号</div><div class="value">ORD-88821</div></div>
+          <div class="op-item"><div class="label">用户手机号</div><div class="value">+92 300 *** 4521</div></div>
+          <div class="op-item"><div class="label">放款金额 (PKR)</div><div class="value green">5,000.00</div></div>
+          <div class="op-item"><div class="label">放款时间</div><div class="value">2026-04-10 08:00:00</div></div>
+          <div class="op-item"><div class="label">取消窗口截止</div><div class="value orange">2026-04-11 08:00:00（剩余 18h 43m）</div></div>
+          <div class="op-item"><div class="label">历史取消申请</div><div class="value" style="color:#52c41a;">无</div></div>
+          <div class="op-item"><div class="label">订单状态</div><div class="value">还款中</div></div>
+        </div>
+      </div>
+
+      <div class="fee-preview">
+        <div class="fp-item"><div class="label">放款本金</div><div class="value">PKR 5,000.00</div></div>
+        <div class="fp-sep">+</div>
+        <div class="fp-item"><div class="label">取消手续费（费率 1%）</div><div class="value">PKR 50.00</div></div>
+        <div class="fp-sep" style="margin-left:auto;">=</div>
+        <div class="fp-item"><div class="label">用户应还总额</div><div class="value total">PKR 5,050.00</div></div>
+      </div>
+
+      <div class="alert alert-warning" style="margin:0;">
+        <div class="alert-title">⚠ 代发起说明</div>
+        <ul>
+          <li>客服代发起后，系统将<strong>直接生成还款指令</strong>，无需用户二次确认</li>
+          <li>请引导用户在还款截止时间前完成还款 PKR 5,050.00</li>
+          <li>本次操作将消耗该订单唯一的取消机会，操作后不可撤销</li>
+        </ul>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>取消原因 <span class="req">*</span></label>
+            <select id="reason-select" onchange="checkForm()">
+              <option value="">请选择</option>
+              <option>不再需要</option>
+              <option>资金已够用</option>
+              <option>利率太高</option>
+              <option>用户投诉</option>
+              <option>其他</option>
+            </select>
+          </div>
+          <div class="form-group" id="reason-text-group" style="display:none;">
+            <label>补充说明 <span class="req">*</span></label>
+            <input type="text" id="reason-text" placeholder="请填写具体原因" oninput="checkForm()" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>备注（选填）</label>
+          <textarea placeholder="如有其他需要记录的信息，请填写"></textarea>
+        </div>
+        <div class="confirm-check">
+          <input type="checkbox" id="chk-agent" onchange="checkForm()" />
+          <label for="chk-agent">我已与用户确认取消意愿，了解此操作将直接生成还款指令且不可撤销</label>
+        </div>
+        <div class="submit-row">
+          <button class="btn" onclick="location.href='index.html'">取消</button>
+          <button class="btn btn-primary btn-lg" id="btn-submit" disabled onclick="doSubmit()">确认代发起取消申请</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Case B: CANNOT cancel -->
+  <div class="card" id="panel-cannot-cancel" style="display:none;">
+    <div class="card-title">订单信息确认</div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="order-preview">
+        <div class="op-grid">
+          <div class="op-item"><div class="label">订单编号</div><div class="value">ORD-88590</div></div>
+          <div class="op-item"><div class="label">用户手机号</div><div class="value">+92 312 *** 3344</div></div>
+          <div class="op-item"><div class="label">放款金额 (PKR)</div><div class="value green">2,500.00</div></div>
+          <div class="op-item"><div class="label">放款时间</div><div class="value">2026-04-09 10:00:00</div></div>
+          <div class="op-item"><div class="label">取消窗口截止</div><div class="value" style="color:#f5222d;">2026-04-10 10:00:00（已过期）</div></div>
+        </div>
+      </div>
+      <div class="cannot-cancel">
+        <div class="cc-title">🚫 该订单无法发起取消申请</div>
+        <div class="cc-reason">
+          原因一：<strong>取消窗口已关闭</strong>（放款时间：2026-04-09 10:00，窗口截止：2026-04-10 10:00，已超时 25 小时）
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:8px;">
+        <button class="btn" onclick="location.href='index.html'">返回列表</button>
+        <button class="btn btn-ghost" onclick="resetSearch()">重新查询</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Case C: Already has request -->
+  <div class="card" id="panel-has-request" style="display:none;">
+    <div class="card-title">订单信息确认</div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="order-preview">
+        <div class="op-grid">
+          <div class="op-item"><div class="label">订单编号</div><div class="value">ORD-88756</div></div>
+          <div class="op-item"><div class="label">用户手机号</div><div class="value">+92 321 *** 7890</div></div>
+          <div class="op-item"><div class="label">放款金额 (PKR)</div><div class="value green">3,000.00</div></div>
+          <div class="op-item"><div class="label">放款时间</div><div class="value">2026-04-10 07:00:00</div></div>
+          <div class="op-item"><div class="label">取消窗口截止</div><div class="value orange">2026-04-11 07:00:00（剩余 20h）</div></div>
+        </div>
+      </div>
+      <div class="cannot-cancel">
+        <div class="cc-title">🚫 该订单无法发起取消申请</div>
+        <div class="cc-reason">
+          原因：<strong>该订单已有用户自助申请记录</strong>，每笔订单仅限一次取消机会。
+          <br/><br/>
+          申请编号：CAN-20260410-002 &nbsp;|&nbsp; 状态：<span class="tag tag-repayment" style="font-size:12px;">待还款</span> &nbsp;|&nbsp; 申请时间：2026-04-10 08:45
+          <a href="detail.html" class="cc-link">查看申请详情 →</a>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:8px;">
+        <button class="btn" onclick="location.href='index.html'">返回列表</button>
+        <button class="btn btn-ghost" onclick="resetSearch()">重新查询</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Success -->
+  <div class="card" id="panel-success" style="display:none;">
+    <div class="card-body">
+      <div class="success-box">
+        <div class="icon">✅</div>
+        <div class="title">取消申请已成功发起</div>
+        <div class="desc">请引导用户在截止时间前完成还款</div>
+        <div class="amount">PKR 5,050.00</div>
+        <div class="deadline">还款截止时间：2026-04-11 09:22:10</div>
+        <div class="desc" style="color:#999;font-size:12px;">申请编号：CAN-20260410-009 &nbsp;|&nbsp; 操作人：HeQiuChan &nbsp;|&nbsp; 操作时间：2026-04-10 09:22:10</div>
+        <div class="actions" style="margin-top:20px;">
+          <button class="btn" onclick="location.href='index.html'">返回列表</button>
+          <button class="btn btn-primary" onclick="location.href='detail.html'">查看申请详情</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Simulate search: cycle through 3 scenarios based on input
+  function doSearch() {
+    const val = document.getElementById('order-input').value.trim();
+    if (!val) { alert('请输入订单编号'); return; }
+
+    // Hide all result panels
+    ['panel-can-cancel','panel-cannot-cancel','panel-has-request'].forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+
+    // Simulate different results
+    if (val.toLowerCase().includes('88590')) {
+      document.getElementById('panel-cannot-cancel').style.display = 'block';
+    } else if (val.toLowerCase().includes('88756')) {
+      document.getElementById('panel-has-request').style.display = 'block';
+    } else {
+      document.getElementById('panel-can-cancel').style.display = 'block';
+    }
+    // Update step: step1 done, step2 active
+    document.getElementById('s1').className = 'step done';
+    document.getElementById('sl1').className = 'step-line done';
+    document.getElementById('s2').className = 'step active';
+  }
+
+  function resetSearch() {
+    document.getElementById('order-input').value = '';
+    ['panel-can-cancel','panel-cannot-cancel','panel-has-request'].forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+  }
+
+  function checkForm() {
+    const reason = document.getElementById('reason-select').value;
+    const checked = document.getElementById('chk-agent').checked;
+    const textGroup = document.getElementById('reason-text-group');
+    const textVal = document.getElementById('reason-text').value.trim();
+
+    if (reason === '其他') {
+      textGroup.style.display = 'flex';
+    } else {
+      textGroup.style.display = 'none';
+    }
+
+    const reasonOk = reason && (reason !== '其他' || textVal);
+    document.getElementById('btn-submit').disabled = !(reasonOk && checked);
+  }
+
+  function doSubmit() {
+    // Update steps
+    document.getElementById('s2').className = 'step done';
+    document.getElementById('sl2').className = 'step-line done';
+    document.getElementById('s3').className = 'step active';
+
+    document.getElementById('panel-can-cancel').style.display = 'none';
+    document.getElementById('panel-success').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
